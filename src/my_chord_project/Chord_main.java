@@ -1,26 +1,27 @@
 package my_chord_project;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 public class Chord_main {
 	/*
-	 * this method is used to generate active nodes randomly
+	 *  n bthis method is used to generate active nodes randomly
 	 */
 	ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
 	int total_nodes;
+	ArrayList<Integer> numbers;
 	public void generate_active_nodes(int a,int c,int total_number_nodes)
 	{
 		
-		int x=1;
+		int x=3;
 		total_nodes = total_number_nodes;
-		ArrayList<Integer> numbers= new ArrayList<Integer>();
+		numbers= new ArrayList<Integer>();
 		x = ((a*x)+c)%total_number_nodes;
 		numbers.add(x);	
 		while(true)
 		{
-			System.out.println(x);
 			x = ((a*x)+c)%total_number_nodes;		
 			if(numbers.contains(x))
 			{
@@ -29,14 +30,81 @@ public class Chord_main {
 			numbers.add(x);			
 		}
 		Chord_node temp;
+		Collections.sort(numbers);
 		for(int i=0;i<numbers.size();i++)
 		{
 			temp = new Chord_node();
-			temp.node = x;	
+			temp.node = numbers.get(i);	
+			if(i==0)
+			{
+				temp.sucessor = numbers.get(i+1);
+				temp.predecessor = numbers.get(numbers.size()-1);
+			}
+			else if(i==numbers.size()-1)
+			{
+				temp.sucessor = numbers.get(0);
+				temp.predecessor = numbers.get(i-1);
+			}
+			else
+			{
+				temp.sucessor = numbers.get(i+1);
+				temp.predecessor = numbers.get(i-1);
+			}
+			
 			active_nodes.add(temp);
 		}
 		
 	}
+	
+	
+	
+	//iterates over all nodes to cluculate finger tables
+	public void generate_finger_nodes(int m)
+	{
+		for(int i=0;i<active_nodes.size();i++)
+		{
+			calucaulate_finger_table(active_nodes.get(i), m);
+		}	
+	}
+	
+	//atomic method to caluculate finger table
+	public Chord_node calucaulate_finger_table(Chord_node c, int m)
+	{
+		int finger_table[][] = new int[m][2];
+		for(int i=0;i<m;i++)
+		{
+			int num = (c.node + (int)Math.pow(2, i))%total_nodes;
+			finger_table[i][0] = num;
+			finger_table[i][1] = get_successor(num);
+		}
+		c.setFinger_tabel(finger_table);
+		return c;
+	}
+	
+	
+	//get sucessor node for a given node from "numbers" information
+	public int get_successor(int node)
+	{
+		for(int i=0; i<numbers.size(); i++)
+		{
+			if (node <= numbers.get(i))
+			{
+				return numbers.get(i);
+			}
+			
+		}
+		return numbers.get(0);
+	}
+	
+	//display all nodes inforamtion
+	public void display_node_info()
+	{
+		for(int i=0;i<active_nodes.size();i++)
+		{
+			active_nodes.get(i).print_object();
+		}
+	}
+	
 	
 	public static void main(String args[])
 	{
@@ -53,6 +121,14 @@ public class Chord_main {
 		cm.generate_active_nodes(a, c, total_number_nodes);
 		
 		
+		
+		for(int i=0;i<cm.active_nodes.size();i++)
+		{
+			System.out.print(cm.active_nodes.get(i).getNode()+" ");
+		}
+		
+		cm.generate_finger_nodes(m);
+		cm.display_node_info();
 	}
 	
 
