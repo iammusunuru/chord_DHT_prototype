@@ -11,7 +11,7 @@ public class Chord_main {
 	 */
 	ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
 	int total_nodes;
-	ArrayList<Integer> numbers;
+	public ArrayList<Integer> numbers;
 	public void generate_active_nodes(int a,int c,int total_number_nodes)
 	{
 		
@@ -108,16 +108,45 @@ public class Chord_main {
 	}
 	
 	//search for a succesor to a given random node
-	public Chord_node lookup(int search_node, int random_key_node)
+	public Chord_node lookup(int search_node, int key_node)
 	{
 		Chord_node search_node_obj = get_active_node_reference(search_node);
-		while(! (search_node <= random_key_node && search_node_obj.sucessor >= random_key_node))
+		print_info("\n##############Search##############", 1);
+		print_info("\nStarted searching for node "+key_node, 1);
+		while(! (search_node_obj.getNode() <= key_node && search_node_obj.sucessor >= key_node))
 		{
-			
+			int[][] finger_tabel = search_node_obj.getFinger_tabel();
+			int i;
+			for(i=0;i<finger_tabel.length;i++)
+			{
+				if(finger_tabel[i][0] > key_node)
+				{
+					print_info("\nNearest predeseesor is "+finger_tabel[i-1][0], 1);
+					break;
+				}
+			}
+			if((finger_tabel[i-1][0]<=key_node)&&(finger_tabel[i-1][1]>=key_node))
+			{
+				print_info("\nNode "+key_node+" lies between "+finger_tabel[i-1][0]+"and"+finger_tabel[i-1][1], 1);
+				return get_active_node_reference(finger_tabel[i-1][1]);
+			}
+			else
+			{
+				print_info("\nNode "+key_node+"doesn't lies between "+finger_tabel[i-1][0]+" and it's sucessor"+finger_tabel[i-1][1], 1);
+				print_info("\nGoing to search in node "+finger_tabel[i-1][1], 1);
+				search_node_obj = get_active_node_reference(finger_tabel[i-1][1]);
+			}
 		}
 		return null;
 	}
 	
+	public void print_info(String msg, int window)
+	{
+		if(window==1)
+		{
+			System.out.println(msg);
+		}
+	}
 	
 	
 	//display all nodes informtion
@@ -153,6 +182,10 @@ public class Chord_main {
 		
 		cm.generate_finger_nodes(m);
 		cm.display_node_info();
+		
+		System.out.println("\nEnter node to search");
+		Chord_node cn = cm.lookup(cm.numbers.get(0), s.nextInt());
+		System.out.println("------->"+cn.getNode());
 	}
 	
 

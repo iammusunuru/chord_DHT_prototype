@@ -37,13 +37,14 @@ public class Chord_node {
 	
 	public void print_object()
 	{
-		System.out.println("\nNode name is"+node);
-		System.out.println("\nSucessor is"+sucessor);
-		System.out.println("\nPredecessor is"+predecessor);
+		System.out.println("\n####################");
+		System.out.println("Node name is"+node);
 		for(int i=0;i<finger_table.length;i++)
 		{
 			System.out.println(finger_table[i][0]+"----->"+finger_table[i][1]);
 		}
+		System.out.println("Sucessor is"+sucessor);
+		System.out.println("Predecessor is"+predecessor);
 	}
 	
 	
