@@ -8,13 +8,14 @@ public class Chord_node {
 	int predecessor;
 	int sucessor;
 	int node;
+	int [][] finger_table;
+	
 	public int getNode() {
 		return node;
 	}
 	public void setNode(int node) {
 		this.node = node;
 	}
-	int [][] finger_table;
 	public int getPredecessor() {
 		return predecessor;
 	}

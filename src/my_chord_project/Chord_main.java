@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Chord_main {
 	/*
-	 *  n bthis method is used to generate active nodes randomly
+	 * this method is used to generate active nodes randomly
 	 */
 	ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
 	int total_nodes;
@@ -56,8 +56,6 @@ public class Chord_main {
 		
 	}
 	
-	
-	
 	//iterates over all nodes to cluculate finger tables
 	public void generate_finger_nodes(int m)
 	{
@@ -82,7 +80,7 @@ public class Chord_main {
 	}
 	
 	
-	//get sucessor node for a given node from "numbers" information
+	//get sucessor node for a given random node from "numbers" information
 	public int get_successor(int node)
 	{
 		for(int i=0; i<numbers.size(); i++)
@@ -96,7 +94,33 @@ public class Chord_main {
 		return numbers.get(0);
 	}
 	
-	//display all nodes inforamtion
+	//takes active node number and returns Chord_node object as reference
+	public Chord_node get_active_node_reference(int node)
+	{
+		for(Chord_node cn : active_nodes)
+		{
+			if(cn.getNode() == node)
+			{
+				return cn;
+			}
+		}
+		return null;
+	}
+	
+	//search for a succesor to a given random node
+	public Chord_node lookup(int search_node, int random_key_node)
+	{
+		Chord_node search_node_obj = get_active_node_reference(search_node);
+		while(! (search_node <= random_key_node && search_node_obj.sucessor >= random_key_node))
+		{
+			
+		}
+		return null;
+	}
+	
+	
+	
+	//display all nodes informtion
 	public void display_node_info()
 	{
 		for(int i=0;i<active_nodes.size();i++)
