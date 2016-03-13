@@ -119,8 +119,12 @@ public class Chord_main {
 			int i;
 			for(i=0;i<finger_tabel.length;i++)
 			{
-				if(finger_tabel[i][0] > key_node)
+				if(finger_tabel[i][0] >= key_node)
 				{
+					if(i==0)
+					{
+						//check in between
+					}
 					print_info("\nNearest predeseesor is "+finger_tabel[i-1][0], 1);
 					break;
 				}
