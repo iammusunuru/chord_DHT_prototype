@@ -113,7 +113,8 @@ public class Chord_main {
 		Chord_node search_node_obj = get_active_node_reference(search_node);
 		print_info("\n##############Search##############", 1);
 		print_info("\nStarted searching for node "+key_node, 1);
-		while(! (search_node_obj.getNode() <= key_node && search_node_obj.sucessor >= key_node))
+		//! (search_node_obj.getNode() <= key_node && search_node_obj.sucessor >= key_node)
+		while(true)
 		{
 			int[][] finger_tabel = search_node_obj.getFinger_tabel();
 			int i;
@@ -125,7 +126,7 @@ public class Chord_main {
 					{
 						//check in between
 					}
-					print_info("\nNearest predeseesor is "+finger_tabel[i-1][0], 1);
+					print_info("\nNearest predeceesor is "+finger_tabel[i-1][0], 1);
 					break;
 				}
 			}
@@ -139,9 +140,10 @@ public class Chord_main {
 				print_info("\nNode "+key_node+"doesn't lies between "+finger_tabel[i-1][0]+" and it's sucessor"+finger_tabel[i-1][1], 1);
 				print_info("\nGoing to search in node "+finger_tabel[i-1][1], 1);
 				search_node_obj = get_active_node_reference(finger_tabel[i-1][1]);
+				System.out.println(search_node_obj.node);
 			}
 		}
-		return null;
+		
 	}
 	
 	public void print_info(String msg, int window)
