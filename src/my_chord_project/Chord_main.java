@@ -9,7 +9,7 @@ public class Chord_main {
 	/*
 	 * this method is used to generate active nodes randomly
 	 */
-	ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
+	static ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
 	int total_nodes;
 	public ArrayList<Integer> numbers;
 	public void generate_active_nodes(int a,int c,int total_number_nodes)
@@ -106,7 +106,9 @@ public class Chord_main {
 		}
 		return null;
 	}
-	
+	/*TODO:fix search 30 between 29 and 9
+	 *
+	 */
 	//search for a succesor to a given random node
 	public Chord_node lookup(int search_node, int key_node)
 	{
@@ -120,11 +122,13 @@ public class Chord_main {
 			int i;
 			for(i=0;i<finger_tabel.length;i++)
 			{
+				//assuming starting value in finger table will be always less than or equal
 				if(finger_tabel[i][0] >= key_node)
 				{
 					if(i==0)
 					{
-						//check in between
+						//assuming that it will break soon
+						i=1;
 					}
 					print_info("\nNearest predeceesor is "+finger_tabel[i-1][0], 1);
 					break;
@@ -188,10 +192,12 @@ public class Chord_main {
 		
 		cm.generate_finger_nodes(m);
 		cm.display_node_info();
-		
+		while(true)
+		{
 		System.out.println("\nEnter node to search");
 		Chord_node cn = cm.lookup(cm.numbers.get(0), s.nextInt());
 		System.out.println("------->"+cn.getNode());
+		}
 	}
 	
 
