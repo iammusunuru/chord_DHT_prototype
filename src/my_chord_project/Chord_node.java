@@ -16,16 +16,16 @@ public class Chord_node {
 	public void setNode(int node) {
 		this.node = node;
 	}
-	public int getPredecessor() {
+	public synchronized int getPredecessor() {
 		return predecessor;
 	}
-	public void setPredecessor(int predecessor) {
+	public synchronized void setPredecessor(int predecessor) {
 		this.predecessor = predecessor;
 	}
-	public int getSucessor() {
+	public synchronized int getSucessor() {
 		return sucessor;
 	}
-	public void setSucessor(int sucessor) {
+	public synchronized void setSucessor(int sucessor) {
 		this.sucessor = sucessor;
 	}
 	public int[][] getFinger_tabel() {
@@ -35,18 +35,16 @@ public class Chord_node {
 		this.finger_table = finger_table;
 	}
 	
-	public void print_object()
+	public void print_object(int window)
 	{
-		System.out.println("\n####################");
-		System.out.println("Node name is"+node);
+		Chord_main.print_info("\n########NODE INFORMATION############",window);
+		Chord_main.print_info("\nNode name is"+node,window);
 		for(int i=0;i<finger_table.length;i++)
 		{
-			System.out.println(finger_table[i][0]+"----->"+finger_table[i][1]);
+			Chord_main.print_info("\n"+finger_table[i][0]+"----->"+finger_table[i][1],window);
 		}
-		System.out.println("Sucessor is"+sucessor);
-		System.out.println("Predecessor is"+predecessor);
+		Chord_main.print_info("\nSucessor is"+sucessor,window);
+		Chord_main.print_info("\nPredecessor is"+predecessor,window);
 	}
-	
-	
-
 }
+

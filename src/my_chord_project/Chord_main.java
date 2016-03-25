@@ -1,9 +1,17 @@
 package my_chord_project;
 
+import java.awt.CardLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.JTextArea;
+
+/*
+ *TODO: MAke the lookup work 
+ *
+ */
 
 public class Chord_main {
 	/*
@@ -11,7 +19,20 @@ public class Chord_main {
 	 */
 	static ArrayList<Chord_node> active_nodes = new ArrayList<Chord_node>();
 	int total_nodes;
-	public ArrayList<Integer> numbers;
+	static ArrayList<Integer> numbers;
+	public static JTextArea window1;
+	public static JTextArea window2;
+	public static JTextArea window3;
+	
+	
+	
+	public void initialize_windows(JTextArea win1,JTextArea win2,JTextArea win3)
+	{
+		this.window1 = win1;
+		this.window2 = win2;
+		this.window3 = win3;
+	}
+	
 	public void generate_active_nodes(int a,int c,int total_number_nodes)
 	{
 		
@@ -95,7 +116,7 @@ public class Chord_main {
 	}
 	
 	//takes active node number and returns Chord_node object as reference
-	public Chord_node get_active_node_reference(int node)
+	public synchronized static Chord_node get_active_node_reference(int node)
 	{
 		for(Chord_node cn : active_nodes)
 		{
@@ -134,7 +155,7 @@ public class Chord_main {
 					break;
 				}
 			}
-			if((finger_tabel[i-1][0]<=key_node)&&(finger_tabel[i-1][1]>=key_node))
+			if(((finger_tabel[i-1][0]<=key_node)&&(finger_tabel[i-1][1]>=key_node)) || get_successor(key_node) == finger_tabel[i-1][1])
 			{
 				print_info("\nNode "+key_node+" lies between "+finger_tabel[i-1][0]+"and"+finger_tabel[i-1][1], 1);
 				return get_active_node_reference(finger_tabel[i-1][1]);
@@ -144,30 +165,133 @@ public class Chord_main {
 				print_info("\nNode "+key_node+"doesn't lies between "+finger_tabel[i-1][0]+" and it's sucessor"+finger_tabel[i-1][1], 1);
 				print_info("\nGoing to search in node "+finger_tabel[i-1][1], 1);
 				search_node_obj = get_active_node_reference(finger_tabel[i-1][1]);
-				System.out.println(search_node_obj.node);
 			}
 		}
 		
 	}
 	
-	public void print_info(String msg, int window)
+	public static void print_info(String msg, int window)
 	{
+		//basic chord initialization finger tables, 
 		if(window==1)
 		{
-			System.out.println(msg);
+			//System.out.println(msg);
+			String text = window1.getText();
+			window1.setText(text+msg);
 		}
+		
+		// node joining
+		if(window==2)
+		{
+			//System.out.println(msg);
+			String text = window2.getText();
+			window2.setText(text+msg);
+		}
+		
+		if(window==3)
+		{
+			//System.out.println(msg);
+			String text = window3.getText();
+			window3.setText(text+msg);
+		}
+			
+		
 	}
 	
 	
-	//display all nodes informtion
-	public void display_node_info()
+	//display all nodes information
+	public void display_node_info(int window)
 	{
 		for(int i=0;i<active_nodes.size();i++)
 		{
-			active_nodes.get(i).print_object();
+			active_nodes.get(i).print_object(window);
 		}
 	}
 	
+	//return successor from numbers also adjust position in numbers
+	// 0----->predecessor
+	// 1----->successor
+	public int[] insert_into_numbers(int node)
+	{
+		int[] near_elements = new int[2];
+		for(int i=0;i<numbers.size();i++)
+		{
+			
+			if(node < numbers.get(i))
+			{
+				int successor = numbers.get(i); 
+				near_elements[1] = successor;
+				if(i==0)
+				{
+					int predessor = numbers.get(numbers.size()-1);
+					near_elements[0] = predessor;
+				}
+				else
+				{
+					int predessor = numbers.get(i-1);
+					near_elements[0] = predessor;
+				}
+				numbers.add(i, node);
+				return near_elements;
+			}
+			if(i==(numbers.size()-1))
+			{
+			near_elements[0] = numbers.get(i);
+			near_elements[1] = numbers.get(0);
+			numbers.add(node);
+			return near_elements;
+			}
+		}
+		return near_elements;
+	}
+   
+	public void fix_fingertables(int node)
+	{
+		for(Chord_node c: active_nodes)
+		{
+			int[][] fing_table = c.getFinger_tabel();
+			int node_name = c.getNode();
+			for(int i=0; i<fing_table.length; i++)
+			{
+				// (node >= fing_table[i][0] && node<fing_table[i][1])||((node >= fing_table[i][0])&&(fing_table[i][1]==numbers.get(0)))
+				if( get_successor(fing_table[i][0]) == node)
+				{
+					print_info("\nchanging node "+node_name+" finger entry "+fing_table[i][0]+"---"+fing_table[i][1]+"to "+fing_table[i][0]+"---"+node, 2);
+				}
+			}
+			
+		}
+	}
+	
+	public void add_node(int node, int m)
+    {
+    	
+    	//add the node 
+    	//insert into numbers
+    	//Initialize successor with successor in numbers and initialize predecessor
+    	// *******check first and last elements of number
+    	print_info("\nAdding node "+node+" to the chord \n Looking into nodes directory", 2);
+    	Chord_node cn = new Chord_node();
+    	cn.setNode(node);
+    	int[] nearelements = insert_into_numbers(node);
+    	cn.setPredecessor(nearelements[0]);
+    	cn.setSucessor(nearelements[1]);
+    	print_info("\npredecessor for node "+node+" is "+nearelements[0]+"\nsucessor for node "+node+" is "+nearelements[1], 2);
+    	Chord_node succesor_node = get_active_node_reference(cn.getSucessor());
+    	print_info("\nSetting "+node+"as predessor to node "+nearelements[1], 2);
+    	succesor_node.setPredecessor(node);
+    	print_info("\nstarted caluculating finger node for "+node,2);
+    	calucaulate_finger_table(cn, m);
+    	cn.print_object(2);
+    	active_nodes.add(cn);
+    	print_info("\nUpdating other nodes finger tables .......", 2);
+    	fix_fingertables(node); 
+    	print_info("\nNew finger tables are", 2);
+    	generate_finger_nodes(m);
+    	display_node_info(2);
+    	new stabilize(cn).start();
+    }
+    
 	
 	public static void main(String args[])
 	{
@@ -182,6 +306,7 @@ public class Chord_main {
 		int c = s.nextInt();
 		Chord_main cm = new Chord_main();
 		cm.generate_active_nodes(a, c, total_number_nodes);
+	
 		
 		
 		
@@ -191,14 +316,22 @@ public class Chord_main {
 		}
 		
 		cm.generate_finger_nodes(m);
-		cm.display_node_info();
+		cm.display_node_info(1);
 		while(true)
 		{
+			//test for searching
+			
 		System.out.println("\nEnter node to search");
 		Chord_node cn = cm.lookup(cm.numbers.get(0), s.nextInt());
 		System.out.println("------->"+cn.getNode());
+	
+			
+			/*
+			System.out.println("Enter node to insert");
+			cm.add_node(s.nextInt(), m);
+			*/
 		}
+		
 	}
 	
-
 }
